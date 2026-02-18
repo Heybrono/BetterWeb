@@ -1,0 +1,51 @@
+{
+  "manifest_version": 3,
+  "name": "BetterWeb",
+  "version": "1.1.0",
+  "description": "Advanced Browser Intelligence by leon.cgn.lx — Galaxy new tab, media inspector, ShowMode overlay, and remote extension store.",
+  "author": "leon.cgn.lx",
+  "homepage_url": "https://github.com/Heybrono/BetterWeb",
+  "chrome_url_overrides": {
+    "newtab": "extension/newtab.html"
+  },
+  "background": {
+    "service_worker": "extension/background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["extension/content-bridge.js"],
+      "run_at": "document_start",
+      "all_frames": false
+    }
+  ],
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "permissions": [
+    "storage",
+    "scripting",
+    "activeTab",
+    "tabs"
+  ],
+  "host_permissions": [
+    "<all_urls>",
+    "https://raw.githubusercontent.com/Heybrono/*"
+  ],
+  "action": {
+    "default_title": "BetterWeb — Control Center",
+    "default_popup": "extension/popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png"
+    }
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["extension/*.js", "extension/*.css", "extension/*.html"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}

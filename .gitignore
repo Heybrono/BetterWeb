@@ -1,0 +1,13 @@
+# BetterWeb (Builder)
+# Helper scripts are one-time setup tools and should not be committed
+setup-github.cmd
+setup-github.bat
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Common
+node_modules/
+dist/
+.env

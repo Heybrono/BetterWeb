@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BetterWeb — New Tab</title>
+  <link rel="stylesheet" href="newtab.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <canvas id="starfield"></canvas>
+  <div id="nebula"></div>
+
+  <!-- Top Bar -->
+  <header id="topbar">
+    <div class="brand">
+      <div class="brand-orb"><div class="orb-core"></div></div>
+      <span class="brand-name">Better<span class="accent">Web</span></span>
+      <span class="beta-badge" aria-label="Beta">BETA</span>
+    </div>
+    <nav class="nav-pills">
+      <button class="pill active" data-view="home">Home</button>
+      <button class="pill" data-view="store">Store <span class="beta-badge" aria-label="Beta">BETA</span></button>
+      <button class="pill" data-view="tools">Tools</button>
+    </nav>
+    <div class="topbar-actions">
+      <button id="btn-command" class="tool-btn" title="Command Palette (Ctrl+K / ⌘K)" aria-label="Command Palette">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="18" height="18">
+          <path d="M4 6h16M4 12h10M4 18h16"/>
+        </svg>
+      </button>
+      <button id="btn-media-inspector" class="tool-btn" title="Media Inspector">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="18" height="18"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+      </button>
+      <button id="btn-showmode" class="tool-btn" title="ShowMode">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="18" height="18"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Home View -->
+  <main id="view-home" class="view active">
+    <div class="hero">
+      <h1 class="hero-title">Better<span class="gradient-text">Web</span></h1>
+      <p class="hero-sub">Advanced Browser Intelligence <span class="beta-badge" aria-label="Beta">BETA</span></p>
+
+      <div class="search-wrap">
+        <div class="search-bar">
+          <button id="engine-toggle" class="engine-btn" aria-label="Search engine">
+            <span class="engine-letter" id="engine-letter">G</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="12" height="12"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <input type="text" id="search-input" placeholder="Search the web..." autocomplete="off" spellcheck="false" aria-label="Search">
+          <button id="search-btn" aria-label="Search">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          </button>
+        </div>
+        <div id="engine-dropdown" class="engine-dropdown">
+          <button class="engine-opt active" data-engine="google"><span style="color:#4285f4">G</span>Google</button>
+          <button class="engine-opt" data-engine="duckduckgo"><span style="color:#de5833">D</span>DuckDuckGo</button>
+          <button class="engine-opt" data-engine="yahoo"><span style="color:#720e9e">Y</span>Yahoo</button>
+        </div>
+
+        <!-- Recents (stored locally; not Chrome history) -->
+        <section class="recents-wrap" id="recents-wrap" aria-label="Recents" style="display:none">
+          <div class="recents-head">
+            <div class="recents-title">Recents</div>
+            <button class="recents-clear" id="recents-clear" type="button" title="Clear recents" aria-label="Clear recents">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+              <span>Clear</span>
+            </button>
+          </div>
+          <div class="recents-list" id="recents-list"></div>
+        </section>
+      </div>
+
+      <!-- Apps Dock -->
+      <section class="apps-wrap" aria-label="Apps">
+        <div class="apps-head">
+          <div class="apps-title">Apps</div>
+          <div class="apps-sub">Standard apps + your custom links</div>
+        </div>
+        <div class="apps-grid" id="apps-grid"></div>
+      </section>
+
+      <div class="kbd-hint" aria-label="Keyboard shortcut hints">
+        Tip: Press <kbd>Ctrl</kbd>+<kbd>K</kbd> for Command Palette, <kbd>/</kbd> to focus search.
+      </div>
+    </div>
+  </main>
+
+  <!-- Store View -->
+  <main id="view-store" class="view">
+    <div class="store-header">
+      <h2>Extension Store <span class="beta-badge" aria-label="Beta">BETA</span></h2>
+      <button id="store-refresh" class="tool-btn" title="Refresh">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>
+      </button>
+    </div>
+    <div class="store-beta-note">BETA: BetterWeb ist experimentell — der Store und manche Mods können noch Bugs haben.</div>
+    <div id="store-grid" class="store-grid"></div>
+    <div id="store-loading" class="store-status" style="display:none">Loading...</div>
+    <div id="store-empty" class="store-status" style="display:none">No extensions available.</div>
+  </main>
+
+  <!-- Tools View -->
+  <main id="view-tools" class="view">
+    <div class="tools-header"><h2>Developer Tools</h2></div>
+    <div class="tools-grid">
+      <!-- Media Inspector -->
+      <div class="tool-card" id="tool-media">
+        <div class="tool-icon" style="color:#a855f7">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="28" height="28"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+        </div>
+        <h3>Media Inspector</h3>
+        <p>Detect video &amp; audio sources, playback state, codecs, and network info in real-time.</p>
+        <label class="toggle-wrap"><input type="checkbox" id="toggle-media"><span class="toggle-track"><span class="toggle-thumb"></span></span></label>
+      </div>
+
+      <!-- ShowMode -->
+      <div class="tool-card" id="tool-showmode">
+        <div class="tool-icon" style="color:#4f8fff">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="28" height="28"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        </div>
+        <h3>ShowMode Overlay</h3>
+        <p>Hover to inspect elements — tag, classes, dimensions, z-index, attributes, event listeners.</p>
+        <label class="toggle-wrap"><input type="checkbox" id="toggle-showmode"><span class="toggle-track"><span class="toggle-thumb"></span></span></label>
+      </div>
+
+      <!-- Input Inspector (Mod 2) -->
+      <div class="tool-card" id="tool-input">
+        <div class="tool-icon" style="color:#f59e0b">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="28" height="28"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+        </div>
+        <h3>Input Inspector</h3>
+        <p>Log keystrokes and input events in the background for debugging forms and interactions.</p>
+        <div class="tool-controls">
+          <label class="toggle-wrap"><input type="checkbox" id="toggle-input"><span class="toggle-track"><span class="toggle-thumb"></span></span></label>
+          <div class="tool-btns-row">
+            <button class="tool-action-sm" id="btn-download-logs" title="Download Logs"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></button>
+            <button class="tool-action-sm" id="btn-clear-logs" title="Clear Logs"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Scratchpad Notes -->
+      <div class="tool-card" id="tool-notes">
+        <div class="tool-icon" style="color:#10b981">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="28" height="28"><path d="M8 6h13"/><path d="M8 10h13"/><path d="M8 14h13"/><path d="M8 18h13"/><path d="M3 6h1"/><path d="M3 10h1"/><path d="M3 14h1"/><path d="M3 18h1"/></svg>
+        </div>
+        <h3>Scratchpad Notes</h3>
+        <p>Quick notes on your New Tab. Autosave. Copy/clear in 1 click.</p>
+        <button class="tool-action" id="btn-open-notes" type="button">Open Notes</button>
+      </div>
+
+      <!-- Backup / Restore -->
+      <div class="tool-card" id="tool-backup">
+        <div class="tool-icon" style="color:#a855f7">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="28" height="28"><path d="M20 16.5a4.5 4.5 0 0 0-1.3-8.8A6 6 0 1 0 6 18h14"/><path d="M12 12v9"/><path d="M8 17l4 4 4-4"/></svg>
+        </div>
+        <h3>Backup &amp; Restore</h3>
+        <p>Export your BetterWeb data (apps, recents, settings) as JSON and import it on another device.</p>
+        <button class="tool-action" id="btn-open-backup" type="button">Open Backup</button>
+      </div>
+
+      <!-- Extension Manager -->
+      <div class="tool-card">
+        <div class="tool-icon" style="color:#10b981">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="28" height="28"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        </div>
+        <h3>Extension Manager</h3>
+        <p>View installed extensions, toggle enable/disable, uninstall, and check versions.</p>
+        <button class="tool-action" onclick="document.querySelector('[data-view=store]').click()">Open Store</button>
+      </div>
+    </div>
+  </main>
+
+  <!-- Install Modal -->
+  <div id="install-overlay" class="modal-overlay">
+    <div class="modal">
+      <div class="modal-head">
+        <h3 id="inst-name">Extension</h3>
+        <button id="inst-close" class="modal-x">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="inst-meta">
+          <span id="inst-publisher"></span>
+          <span id="inst-version"></span>
+        </div>
+        <p id="inst-desc"></p>
+        <div class="inst-section"><h4>Privacy</h4><p id="inst-privacy"></p></div>
+        <div class="inst-section"><h4>Permissions</h4><div id="inst-perms"></div></div>
+        <label class="inst-accept"><input type="checkbox" id="inst-check"><span class="checkmark"></span>I accept the permissions</label>
+      </div>
+      <div class="modal-foot">
+        <button id="inst-cancel" class="btn-ghost">Cancel</button>
+        <button id="inst-confirm" class="btn-primary" disabled>Install</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add App Modal -->
+  <div id="app-overlay" class="modal-overlay">
+    <div class="modal">
+      <div class="modal-head">
+        <h3>Add App</h3>
+        <button id="app-close" class="modal-x">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="inst-section">
+          <h4>Name</h4>
+          <input id="app-name" class="bw-input" type="text" placeholder="e.g. Discord" autocomplete="off" />
+        </div>
+        <div class="inst-section">
+          <h4>URL</h4>
+          <input id="app-url" class="bw-input" type="text" placeholder="https://example.com" autocomplete="off" />
+          <p class="bw-hint">Tip: If you paste without https:// we’ll auto-fix it.</p>
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button id="app-cancel" class="btn-ghost">Cancel</button>
+        <button id="app-save" class="btn-primary">Add</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Update / Lock Modal (version.json) -->
+  <div id="bw-update-overlay" class="modal-overlay">
+    <div class="modal">
+      <div class="modal-head">
+        <h3 id="bw-upd-title">Update</h3>
+        <button id="bw-upd-close" class="modal-x">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="inst-section"><h4 id="bw-upd-status-title">Status</h4><p id="bw-upd-message">—</p></div>
+        <div class="inst-section" id="bw-upd-news-wrap" style="display:none"><h4>News</h4><div id="bw-upd-news" style="display:flex;flex-direction:column;gap:8px"></div></div>
+      </div>
+      <div class="modal-foot">
+        <button id="bw-upd-later" class="btn-ghost">Später</button>
+        <a id="bw-upd-action" class="btn-primary" href="#" target="_blank" rel="noopener">Jetzt aktualisieren</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Command Palette -->
+  <div id="bw-palette-overlay" class="modal-overlay">
+    <div class="modal modal-lg">
+      <div class="modal-head">
+        <div style="display:flex;flex-direction:column;gap:2px">
+          <h3>Command Palette</h3>
+          <div class="bw-modal-sub">Type to search actions, apps, mods &amp; themes</div>
+        </div>
+        <button id="bw-palette-close" class="modal-x">&times;</button>
+      </div>
+      <div class="modal-body">
+        <input id="bw-palette-input" class="bw-input" type="text" placeholder="Search… (try: notes, backup, youtube, toggle focus mode)" autocomplete="off" />
+        <div class="bw-palette-list" id="bw-palette-list" role="listbox" aria-label="Command results"></div>
+        <div class="bw-palette-help">Shortcuts: <kbd>↑</kbd>/<kbd>↓</kbd> to navigate, <kbd>Enter</kbd> to run, <kbd>Esc</kbd> to close.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scratchpad Notes -->
+  <div id="bw-notes-overlay" class="modal-overlay">
+    <div class="modal modal-lg">
+      <div class="modal-head">
+        <div style="display:flex;flex-direction:column;gap:2px">
+          <h3>Scratchpad Notes</h3>
+          <div class="bw-modal-sub">Autosave — stored locally (chrome.storage)</div>
+        </div>
+        <button id="bw-notes-close" class="modal-x">&times;</button>
+      </div>
+      <div class="modal-body">
+        <textarea id="bw-notes-ta" class="bw-textarea" rows="10" placeholder="Write anything…"></textarea>
+        <div class="bw-row">
+          <button id="bw-notes-copy" class="btn-ghost" type="button">Copy</button>
+          <button id="bw-notes-clear" class="btn-ghost" type="button">Clear</button>
+          <div style="flex:1"></div>
+          <button id="bw-notes-done" class="btn-primary" type="button">Done</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Backup / Restore -->
+  <div id="bw-backup-overlay" class="modal-overlay">
+    <div class="modal modal-lg">
+      <div class="modal-head">
+        <div style="display:flex;flex-direction:column;gap:2px">
+          <h3>Backup &amp; Restore</h3>
+          <div class="bw-modal-sub">Export/import your BetterWeb data as JSON</div>
+        </div>
+        <button id="bw-backup-close" class="modal-x">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="bw-backup-grid">
+          <div class="bw-card">
+            <div class="bw-card-title">Export</div>
+            <div class="bw-card-sub">Apps, recents, settings, installed store items</div>
+            <button id="bw-backup-export" class="btn-primary" type="button">Download Backup JSON</button>
+          </div>
+          <div class="bw-card">
+            <div class="bw-card-title">Import</div>
+            <div class="bw-card-sub">Restore from a previously exported JSON file</div>
+            <input id="bw-backup-file" class="bw-input" type="file" accept="application/json,.json" />
+            <div class="bw-row" style="margin-top:10px">
+              <button id="bw-backup-import" class="btn-primary" type="button">Import Backup</button>
+              <button id="bw-backup-reset" class="btn-ghost" type="button">Reset BetterWeb data</button>
+            </div>
+          </div>
+        </div>
+        <div class="bw-palette-help" style="margin-top:12px">Tip: Import will overwrite your local BetterWeb data. You’ll be asked to confirm.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabs & Workspaces -->
+  <div id="bw-tabs-overlay" class="modal-overlay">
+    <div class="modal modal-lg">
+      <div class="modal-head">
+        <div style="display:flex;flex-direction:column;gap:2px">
+          <h3>Tabs &amp; Workspaces</h3>
+          <div class="bw-modal-sub">Manage open tabs and saved sessions</div>
+        </div>
+        <button id="bw-tabs-close" class="modal-x">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="bw-inner-tabs" role="tablist" aria-label="Tabs and workspaces">
+          <button class="bw-inner-tab active" type="button" data-tab="tabs">Tabs</button>
+          <button class="bw-inner-tab" type="button" data-tab="workspaces">Workspaces</button>
+        </div>
+
+        <div id="bw-inner-view-tabs" class="bw-inner-view active">
+          <input id="bw-tabs-filter" class="bw-input" type="text" placeholder="Filter tabs… (try: youtube, github)" autocomplete="off" />
+          <div class="bw-tabs-list" id="bw-tabs-list" role="list"></div>
+          <div class="bw-hint">Tip: Command Palette supports <b>tab</b>, <b>close</b>, <b>pin</b>, <b>mute</b> commands.</div>
+        </div>
+
+        <div id="bw-inner-view-workspaces" class="bw-inner-view">
+          <div class="bw-row" style="margin-top:0">
+            <input id="bw-ws-name" class="bw-input" type="text" placeholder="Workspace name (e.g. Work, Study)" autocomplete="off" style="flex:1;min-width:220px" />
+            <button id="bw-ws-save" class="btn-primary" type="button">Save current window</button>
+          </div>
+          <div id="bw-ws-list" class="bw-ws-list"></div>
+          <div class="bw-hint">Workspaces are saved locally (chrome.storage). No cloud sync yet.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="bw-toast" aria-live="polite" aria-atomic="true"></div>
+
+  <script src="storage.js"></script>
+  <script src="registry.js"></script>
+  <script src="installer.js"></script>
+  <script src="newtab.js"></script>
+</body>
+</html>
