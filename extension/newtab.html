@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BetterWeb — New Tab</title>
+  <link rel="stylesheet" href="newtab.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <canvas id="starfield"></canvas>
+  <div id="nebula"></div>
+
+  <!-- Top Bar -->
+  <header id="topbar">
+    <div class="brand">
+      <div class="brand-orb"><div class="orb-core"></div></div>
+      <span class="brand-name">Better<span class="accent">Web</span></span>
+      <span class="beta-badge" aria-label="Beta">BETA</span>
+    </div>
+    <nav class="nav-pills">
+      <button class="pill active" data-view="home">Home</button>
+      <button class="pill" data-view="store">Store <span class="beta-badge" aria-label="Beta">BETA</span></button>
+      <button class="pill" data-view="tools">Tools</button>
+    </nav>
+    <div class="topbar-actions">
+      <button id="btn-command" class="tool-btn" title="Command Palette (Ctrl+K / ⌘K)" aria-label="Command Palette">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="18" height="18">
+          <path d="M4 6h16M4 12h10M4 18h16"/>
+        </svg>
+      </button>
+      <button id="btn-media-inspector" class="tool-btn" title="Media Inspector">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="18" height="18"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+      </button>
+      <button id="btn-showmode" class="tool-btn" title="ShowMode">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="18" height="18"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Home View -->
+  <main id="view-home" class="view active">
+    <div class="hero">
+      <h1 class="hero-title">Better<span class="gradient-text">Web</span></h1>
+      <p class="hero-sub">Advanced Browser Intelligence <span class="beta-badge" aria-label="Beta">BETA</span></p>
+
+      <div class="search-wrap">
+        <div class="search-bar">
+          <button id="engine-toggle" class="engine-btn" aria-label="Search engine">
+            <span class="engine-letter" id="engine-letter">G</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="12" height="12"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <input type="text" id="search-input" placeholder="Search the web..." autocomplete="off" spellcheck="false" aria-label="Search">
+          <button id="search-btn" aria-label="Search">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          </button>
+        </div>
+        <ul id="search-suggestions" class="search-suggestions"></ul>
+        <div id="engine-dropdown" class="engine-dropdown">
+          <button class="engine-opt active" data-engine="google"><span style="color:#4285f4">G</span>Google</button>
+          <button class="engine-opt" data-engine="duckduckgo"><span style="color:#de5833">D</span>DuckDuckGo</button>
+          <button class="engine-opt" data-engine="yahoo"><span style="color:#720e9e">Y</span>Yahoo</button>
+        </div>
+
+        <section class="recents-wrap" id="recents-wrap" aria-label="Recents" style="display:none">
+          <div class="recents-head">
+            <div class="recents-title">Recents</div>
+            <button class="recents-clear" id="recents-clear" type="button" title="Clear recents" aria-label="Clear recents">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+              <span>Clear</span>
+            </button>
+          </div>
+          <div class="recents-list" id="recents-list"></div>
+        </section>
+      </div>
+
+      <section class="apps-wrap" aria-label="Apps">
+        <div class="apps-head">
+          <div class="apps-title">Apps</div>
+          <div class="apps-sub">Standard apps + your custom links</div>
+        </div>
+        <div class="apps-grid" id="apps-grid"></div>
+      </section>
+
+      <div class="kbd-hint" aria-label="Keyboard shortcut hints">
+        Tip: Press <kbd>Ctrl</kbd>+<kbd>K</kbd> for Command Palette, <kbd>/</kbd> to focus search.
+      </div>
+    </div>
+  </main>
+
+  <!-- Store View -->
+  <main id="view-store" class="view">
+    <div class="store-header">
+      <h2>Extension Store <span class="beta-badge" aria-label="Beta">BETA</span></h2>
+      <button id="store-refresh" class="tool-btn" title="Refresh">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>
+      </button>
+    </div>
+    <div class="store-beta-note">BETA: BetterWeb ist experimentell — der Store und manche Mods können noch Bugs haben.</div>
+    <div id="store-grid" class="store-grid"></div>
+    <div id="store-loading" class="store-status" style="display:none">Loading...</div>
+    <div id="store-empty" class="store-status" style="display:none">No extensions available.</div>
+  </main>
+
+  <!-- Tools View -->
+  <main id="view-tools" class="view">
+    <div class="tools-header"><h2>Developer Tools</h2></div>
+    <div class="tools-grid"></div>
+  </main>
+
+  <div id="bw-toast" aria-live="polite" aria-atomic="true"></div>
+
+  <script src="storage.js"></script>
+  <script src="registry.js"></script>
+  <script src="installer.js"></script>
+  <script src="newtab.js"></script>
+</body>
+</html>

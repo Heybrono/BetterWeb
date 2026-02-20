@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BetterWeb Control</title>
+  <link rel="stylesheet" href="popup.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <div class="brand-orb"><div class="orb-core"></div></div>
+      <span>Better<span class="accent">Web</span></span>
+      <span class="beta-badge" aria-label="Beta">BETA</span>
+    </div>
+    <div class="version" id="bw-popup-version">v—</div>
+  </header>
+
+  <nav>
+    <button class="nav-btn active" data-tab="themes">Themes</button>
+    <button class="nav-btn" data-tab="mods">Mods</button>
+    <button class="nav-btn" data-tab="active">Active</button>
+  </nav>
+
+  <main>
+    <!-- Themes Tab -->
+    <div id="tab-themes" class="view active">
+      <div class="section-title">Active Theme</div>
+      <div id="theme-grid" class="theme-grid"></div>
+    </div>
+
+    <!-- Mods Tab -->
+    <div id="tab-mods" class="view">
+      <div class="section-title">Installed Mods</div>
+      <div id="mod-list" class="mod-list"></div>
+      <div id="no-mods" class="empty-state" style="display:none">
+        No mods installed. The whole BetterWeb program is currently BETA.
+      </div>
+    </div>
+
+    <!-- Active (current page) Tab -->
+    <div id="tab-active" class="view">
+      <div class="section-title">On this page</div>
+      <div class="active-meta" id="bw-active-meta">—</div>
+
+      <div id="active-mod-list" class="mod-list"></div>
+      <div id="active-empty" class="empty-state" style="display:none">
+        No active mods detected on this page.
+      </div>
+
+      <div class="active-actions">
+        <button id="bw-active-refresh" class="btn-sm">Refresh</button>
+        <button id="bw-active-disable-all" class="btn-sm danger">Disable all</button>
+      </div>
+
+      <div class="active-hint">
+        Tip: This list is the only place where you can see which mods are actually running on the current site.
+      </div>
+    </div>
+
+    <button id="open-newtab" class="btn-full">Open Dashboard</button>
+  </main>
+
+  <script src="popup.js"></script>
+</body>
+</html>

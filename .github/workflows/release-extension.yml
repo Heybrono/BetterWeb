@@ -1,0 +1,40 @@
+name: Build Extension ZIP (BetterWeb)
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+    paths:
+      - manifest.json
+      - extension/**
+      - scripts/package-extension.mjs
+      - .github/workflows/release-extension.yml
+
+permissions:
+  contents: write
+
+jobs:
+  build-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Package extension-only ZIP
+        run: node scripts/package-extension.mjs
+
+      - name: Publish/Update release asset
+        uses: ncipollo/release-action@v1
+        with:
+          tag: extension-latest
+          name: BetterWeb Extension (Auto)
+          prerelease: true
+          allowUpdates: true
+          replacesArtifacts: true
+          artifacts: dist/BetterWeb-Extension.zip
+          token: ${{ secrets.GITHUB_TOKEN }}
